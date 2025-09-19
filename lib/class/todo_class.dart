@@ -1,6 +1,6 @@
 class Todo {
-  String title;
-  bool status;
+  final String title;
+  final bool isDone;
 
-  Todo({required this.title, required this.status});
+  Todo({required this.title, this.isDone = false});
 }
