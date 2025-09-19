@@ -1,25 +1,26 @@
+// todo_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/cubit/todo__state.dart';
 
 import '../class/todo_class.dart';
 
 class TodoCubit extends Cubit<TodoState> {
-  TodoCubit() : super(TodoState(todos: []));
+  TodoCubit() : super(TodoInitial());
 
-  void addTodo(String title) {
-    final newTodo = Todo(title: title);
-    emit(TodoState(todos: [...state.todos, newTodo]));
+  final List<Todo> _todos = [];
+
+  void addTask(String title) {
+    _todos.add(Todo(title: title));
+    emit(TodoLoaded(List.from(_todos)));
   }
 
-  void toggleTodo(int index) {
-    final updatedTodos = [...state.todos];
-    final todo = updatedTodos[index];
-    updatedTodos[index] = Todo(title: todo.title, isDone: !todo.isDone);
-    emit(TodoState(todos: updatedTodos));
+  void deleteTask(int index) {
+    _todos.removeAt(index);
+    emit(TodoLoaded(List.from(_todos)));
   }
 
-  void deleteTodo(int index) {
-    final updatedTodos = [...state.todos]..removeAt(index);
-    emit(TodoState(todos: updatedTodos));
+  void toggleTask(int index) {
+    _todos[index] = _todos[index].copyWith(isDone: !_todos[index].isDone);
+    emit(TodoLoaded(List.from(_todos)));
   }
 }

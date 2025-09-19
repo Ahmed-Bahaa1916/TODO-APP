@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo/widgets/todo_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/todo__cubit.dart';
+import '../cubit/todo__state.dart';
+import '../widgets/todo_card.dart';
 import '../widgets/bottom_task.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  List<String> tasks = []; // هنا بنخزن كل الـ tasks
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +24,28 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      body: tasks.isEmpty
-          ? const Center(
-        child: Text(
-          "No tasks yet",
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-      )
-          : ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          return TodoCard(text: tasks[index]);
+      body: BlocBuilder<TodoCubit, TodoState>(
+        builder: (context, state) {
+          if (state is TodoLoaded && state.todos.isNotEmpty) {
+            return ListView.builder(
+              itemCount: state.todos.length,
+              itemBuilder: (context, index) {
+                final todo = state.todos[index];
+                return TodoCard(
+                  text: todo.title,
+                  isDone: todo.isDone,
+                  onDelete: () => context.read<TodoCubit>().deleteTask(index),
+                  onComplete: () => context.read<TodoCubit>().toggleTask(index),
+                );
+              },
+            );
+          }
+          return const Center(
+            child: Text(
+              "No tasks yet",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -54,10 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
 
-          if (newTask != null) {
-            setState(() {
-              tasks.add(newTask); // أضف التاسك للليست
-            });
+          if (newTask != null && newTask.isNotEmpty) {
+            context.read<TodoCubit>().addTask(newTask);
           }
         },
         child: const Icon(Icons.add),

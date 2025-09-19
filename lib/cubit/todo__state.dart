@@ -1,7 +1,13 @@
+// todo_state.dart
+
+
 import '../class/todo_class.dart';
 
-class TodoState {
-  final List<Todo> todos;
+abstract class TodoState {}
 
-  const TodoState({required this.todos});
+class TodoInitial extends TodoState {}
+
+class TodoLoaded extends TodoState {
+  final List<Todo> todos;
+  TodoLoaded(this.todos);
 }

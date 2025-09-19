@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 
 class TodoCard extends StatelessWidget {
   final String text;
+  final VoidCallback? onDelete;
+  final VoidCallback? onComplete;
+  final bool isDone;
 
-  const TodoCard({super.key, required this.text});
+  const TodoCard({
+    super.key,
+    required this.text,
+    this.onDelete,
+    this.onComplete,
+    this.isDone = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +31,26 @@ class TodoCard extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: const TextStyle(color: Colors.white, fontSize: 25),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  decoration:
+                  isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                ),
               ),
             ),
-            const Icon(Icons.close, size: 32, color: Colors.red),
-            SizedBox(width: 5),
-            const Icon(Icons.task_alt, size: 32, color: Colors.blue),
+            IconButton(
+              icon: const Icon(Icons.close, size: 30, color: Colors.red),
+              onPressed: onDelete,
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.task_alt,
+                size: 30,
+                color: isDone ? Colors.green : Colors.blue,
+              ),
+              onPressed: onComplete,
+            ),
           ],
         ),
       ),
